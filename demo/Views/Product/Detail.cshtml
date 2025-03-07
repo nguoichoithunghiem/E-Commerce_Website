@@ -1,0 +1,318 @@
+﻿@model ProductDetailsViewModel
+@{
+	ViewData["Title"] = "Detail";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+	<div class="col-sm-3">
+		<partial name="_SidebarPartial" />
+	</div>
+
+	<div class="col-sm-9 padding-right">
+		<div class="product-details">
+			<!--product-details-->
+			<div class="col-sm-5">
+				<div class="view-product">
+					<img src="~/media/products/@Model.ProductDetails.Image" alt="" width="100px" height="200px" />
+					<h3>ZOOM</h3>
+				</div>
+				<div id="similar-product" class="carousel slide" data-ride="carousel">
+
+					<!-- Wrapper for slides -->
+					<div class="carousel-inner">
+						<div class="item">
+							<a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
+							<a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
+							<a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
+						</div>
+					</div>
+
+					<!-- Controls -->
+					<a class="left item-control" href="#similar-product" data-slide="prev">
+						<i class="fa fa-angle-left"></i>
+					</a>
+					<a class="right item-control" href="#similar-product" data-slide="next">
+						<i class="fa fa-angle-right"></i>
+					</a>
+				</div>
+
+			</div>
+			<div class="col-sm-7">
+				<div class="product-information">
+					<h2>@Model.ProductDetails.Name</h2>
+					<span>
+						<span>@Model.ProductDetails.Price.ToString("#,##0 VNĐ")</span>
+						<button type="button" class="btn btn-default cart" data-product_id="@Model.ProductDetails.Id">
+							<i class="fa fa-shopping-cart"></i>
+							Thêm Vào Giỏ Hàng
+						</button>
+					</span>
+					<p><b>Trạng Thái:</b> Còn Hàng</p>
+					<p><b>Tình Trạng:</b> Mới</p>
+					<p><b>Thương Hiệu:</b> @Model.BrandName</p>
+					<p><b>Danh Mục:</b> @Model.CategoryName</p>
+
+					<!-- Chọn kích thước -->
+					<p>
+						<b>Kích Thước:</b>
+						<select class="form-control" id="size-select">
+							<option value="S">S</option>
+							<option value="M">M</option>
+							<option value="L">L</option>
+							<option value="XL">XL</option>
+						</select>
+					</p>
+
+					<!-- Chọn màu sắc -->
+					<p>
+						<b>Màu Sắc:</b>
+						<select class="form-control" id="color-select">
+							<option value="Trắng">Trắng ⚪</option>
+							<option value="Đen">Đen ⚫</option>
+							<option value="Đỏ">Đỏ 🔴</option>
+							<option value="Xanh">Xanh 🔵</option>
+						</select>
+					</p>
+
+					<a href=""><img src="images/product-details/share.png" class="share img-responsive" alt="" /></a>
+				</div>
+			</div>
+
+		</div><!--/product-details-->
+
+		<div class="category-tab shop-details-tab">
+			<!--category-tab-->
+			<div class="col-sm-12">
+				<ul class="nav nav-tabs">
+					<li><a href="#details" data-toggle="tab">Details</a></li>
+					<li><a href="#companyprofile" data-toggle="tab">Size</a></li>
+					<li class="active"><a href="#reviews" data-toggle="tab">Đánh giá (5)</a></li>
+				</ul>
+			</div>
+			<div class="tab-content">
+				<div class="tab-pane fade active in" id="details">
+
+					@Html.Raw(Model.ProductDetails.Description)
+
+				</div>
+
+				<div class="tab-pane fade" id="companyprofile">
+					<img src="~/images/size.png" alt="Alternate Text" />
+				</div>
+
+				
+
+				<div class="tab-pane fade active in" id="reviews">
+					<div class="col-sm-12">
+						<!-- Display existing reviews -->
+						<ul>
+							@foreach (var review in Model.Ratings)
+							{
+								<li>
+									<a href=""><i class="fa fa-user"></i>@review.Name</a>
+									<div>
+										@for (int i = 0; i < review.Star; i++)
+										{
+											<i class="fa fa-star" style="color: #ffcc00;"></i> <!-- Highlighted stars -->
+										}
+										@for (int i = review.Star; i < 5; i++)
+										{
+											<i class="fa fa-star" style="color: #ddd;"></i> <!-- Unfilled stars -->
+										}
+									</div>
+									<p>@review.Comment</p>
+								</li> 
+							}
+						</ul>
+
+					</div>
+				</div>
+				<!-- Đặt câu hỏi -->
+				<div class="ask-question">
+					<h3>Hỏi về sản phẩm</h3>
+					<form method="post" action="@Url.Action("AskQuestion", "Product")">
+						<!-- Trường nhập tên người dùng -->
+						<input type="text" name="userName" placeholder="Nhập tên của bạn" required />
+						<input type="hidden" name="productId" value="@Model.ProductDetails.Id" />
+						<textarea name="question" placeholder="Nhập câu hỏi của bạn..." required></textarea>
+						<button type="submit" class="btn btn-default ask-question-btn">
+							<i class="fa fa-paper-plane"></i> Gửi câu hỏi
+						</button>
+					</form>
+				</div>
+
+
+
+				@if ((Model.Questions as IEnumerable<QuestionModel>)?.Any() == true)
+				{
+					@foreach (var question in Model.Questions as IEnumerable<QuestionModel>)
+					{
+						<li>
+							<a href=""><i class="fa fa-user"></i>@question.UserName</a>
+							<p><strong>Câu hỏi:</strong> @question.Question</p>
+
+							<!-- Kiểm tra xem người dùng có phải là Admin với RoleId là EA8006AF-4080-4458-9629-08F315AAD165 -->
+							@if (Context.Request.Cookies["RoleId"] == "EA8006AF-4080-4458-9629-08F315AAD165")
+							{
+								<!-- Hiển thị form trả lời nếu người dùng có quyền -->
+								<form method="post" action="@Url.Action("AnswerQuestion", "Product")">
+									<input type="hidden" name="questionId" value="@question.Id" />
+									<textarea name="answer" placeholder="Nhập câu trả lời..." required></textarea>
+									<button type="submit" class="btn btn-default add-to-cart">
+										<i class="fa fa-paper-plane"></i> Gửi câu trả lời
+									</button>
+								</form>
+							}
+
+							<!-- Hiển thị các câu trả lời dưới câu hỏi -->
+							@if (question.Answers != null && question.Answers.Any())
+							{
+								<div class="answers-section">
+									<h4>Các câu trả lời:</h4>
+									@foreach (var answer in question.Answers)
+									{
+										<div class="answer">
+											<p><strong>@answer.AdminName:</strong> @answer.Answer</p>
+											<p><i>@answer.DateAnswered</i></p>
+										</div>
+									}
+								</div>
+							}
+							else
+							{
+								<p>Chưa có câu trả lời cho câu hỏi này.</p>
+							}
+						</li>
+					}
+				}
+				else
+				{
+					<p>Hiện tại chưa có câu hỏi nào từ khách hàng.</p>
+				}
+
+
+				<script>
+					// JavaScript to handle star rating selection
+					const stars = document.querySelectorAll('.rating i');
+					const starInput = document.getElementById('Star');
+
+					stars.forEach(star => {
+						star.addEventListener('click', function () {
+							const selectedValue = this.getAttribute('data-value');
+							starInput.value = selectedValue;  // Update the hidden input field with the selected star value
+
+							// Remove 'active' class from all stars
+							stars.forEach(star => star.classList.remove('active'));
+
+							// Add 'active' class to the selected star and all previous stars
+							for (let i = 0; i < selectedValue; i++) {
+								stars[i].classList.add('active');
+							}
+						});
+					});
+				</script>
+
+				<style>
+					.rating {
+						display: flex;
+						justify-content: flex-start;
+						gap: 5px;
+					}
+
+						.rating i {
+							font-size: 30px;
+							cursor: pointer;
+							color: #ddd; /* Default color for inactive stars */
+						}
+
+							.rating i.active {
+								color: #ffcc00; /* Highlight color for selected stars */
+							}
+
+							.rating i:hover {
+								color: #ffcc00; /* Hover effect */
+							}
+				</style>
+
+			</div>
+		</div><!--/category-tab-->
+		
+
+
+		<div class="recommended_items">
+			<!--recommended_items-->
+			<h2 class="title text-center">Related Products</h2>
+
+			<div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+				<div class="carousel-inner">
+
+					<div class="item active">
+						@foreach (var relatedProduct in @ViewBag.RelatedProducts as IEnumerable<ProductModel>)
+						{
+							<div class="col-sm-4">
+								<div class="product-image-wrapper">
+									<div class="single-products">
+
+
+										<div class="productinfo text-center">
+											<a asp-action="Detail" asp-controller="Product" asp-route-Id="@relatedProduct.Id">
+												<img src="~/media/products/@relatedProduct.Image" alt="@relatedProduct.Name" width="100px" height="200px" />
+												<h2>@relatedProduct.Price.ToString("#,##0 VNĐ")</h2>
+												<p>@relatedProduct.Name</p>
+												<p>Danh mục: @relatedProduct.Category.Name</p>
+												<p>Thương hiệu: @relatedProduct.Brand.Name</p>
+											</a>
+
+										</div>
+
+
+									</div>
+
+								</div>
+							</div>
+						}
+
+					</div>
+
+				</div>
+				<a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+					<i class="fa fa-angle-left"></i>
+				</a>
+				<a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+					<i class="fa fa-angle-right"></i>
+				</a>
+			</div>
+
+		</div><!--/recommended_items-->
+
+	</div>
+</div>
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	<script>
+		$('.cart').click(function () {
+			var productId = $(this).data("product_id");  // Get the product ID from the button
+			var selectedSize = $('#size-select').val();  // Get the selected size
+			var selectedColor = $('#color-select').val();  // Get the selected color
+
+			$.ajax({
+				type: "POST",
+				url: "@Url.Action("Add", "Cart")",  // Make sure the URL is correct for the Add method in Cart controller
+				data: {
+					Id: productId,
+					Size: selectedSize,
+					Color: selectedColor
+				},
+				success: function (result) {
+					if (result) {
+						Swal.fire("Thêm giỏ hàng thành công.");
+					}
+				}
+			});
+		});
+	</script>
+
+}

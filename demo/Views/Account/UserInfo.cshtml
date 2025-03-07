@@ -1,0 +1,17 @@
+﻿@model demo.Models.ViewModels.UserInfoViewModel
+
+<h2>Thông tin người dùng</h2>
+
+<div class="user-info">
+    <p><strong>Tên người dùng:</strong> @Model.Username</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+    <p><strong>Địa chỉ giao hàng 1(mặc định):</strong> @Model.ShippingAddress1</p>
+    <p><strong>Địa chỉ giao hàng 2:</strong> @Model.ShippingAddress2</p>
+    <p><strong>Số đơn hàng:</strong> @Model.PurchaseCount</p>
+    <p><strong>Tổng tiền đã mua (mua càng nhiều giảm càng sâu):</strong> @Model.TotalSpent.ToString("C0") VNĐ</p>
+    <p><strong>Vai trò:</strong> @Model.RoleName</p> <!-- Hiển thị vai trò -->
+</div>
+
+<a asp-action="UpdateAccount" class="btn btn-primary">Cập nhật thông tin</a>
+<a asp-action="UpdatePassword" class="btn btn-primary">Cập nhật mật khẩu</a>

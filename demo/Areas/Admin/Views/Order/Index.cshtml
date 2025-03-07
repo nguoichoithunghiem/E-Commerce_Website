@@ -1,0 +1,93 @@
+﻿@model IEnumerable<OrderModel>
+
+@{
+    ViewData["title"] = "Danh Sách Đơn Hàng";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Danh Sách Đơn Hàng</title>
+</head>
+<body>
+    <h3>Danh Sách Đơn Hàng</h3>
+
+    <!-- Bộ lọc theo khoảng thời gian -->
+    <form method="get" asp-action="Index" class="form-inline mb-3">
+        <div class="form-group mr-2">
+            <label for="FromDate">Từ ngày</label>
+            <input type="date" id="FromDate" name="FromDate" class="form-control" />
+        </div>
+        <div class="form-group mr-2">
+            <label for="ToDate">Đến ngày</label>
+            <input type="date" id="ToDate" name="ToDate" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </form>
+
+    <!-- Bảng -->
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Mã Đơn Hàng</th>
+                <th>Phí Vận Chuyển</th>
+                <th>Địa Chỉ Giao Hàng</th>
+                <th>Tổng Tiền</th>
+                <th>Tổng Sau Giảm Giá</th>
+                <th>Mã Giảm Giá</th>
+                <th>Tên Người Dùng</th>
+                <th>Trạng Thái Đơn Hàng</th>
+                <th>Ngày Tạo</th>
+                <th>Phương Thức Thanh Toán</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Reverse())
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.OrderCode</td>
+                    <td>@item.ShippingCost.ToString("#,##0 đ")</td>
+                    <td>@item.ShippingAddress</td>
+                    <td>@item.TotalAmount</td>
+                    <td>@item.TotalAfterDiscount</td>
+                    <td>@item.CouponCode</td>
+                    <td>@item.UserName</td>
+                    <td>
+                        @if (item.Status == 1)
+                        {
+                            <span class="text text-success">Đơn hàng mới</span>
+                        }
+                        else if (item.Status == 2)
+                        {
+                            <span class="text text-success">Đã xử lý</span>
+                        }
+                        else if (item.Status == 3)
+                        {
+                            <span class="text text-success">Đang giao</span>
+                        }
+                        else if (item.Status == 4)
+                        {
+                            <span class="text text-success">Khách đã nhận hàng</span>
+                        }
+                        else
+                        {
+                            <span class="text text-danger">Đã hủy</span>
+                        }
+                    </td>
+                    <td>@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                    <td>@item.PaymentMethod</td>
+                    <td>
+                        <a class="btn btn-warning btn-sm" asp-action="ViewOrder" asp-controller="Order" asp-route-ordercode="@item.OrderCode">Xem Đơn Hàng</a>
+                        <a class="btn btn-danger btn-sm" asp-action="Delete" asp-controller="Order" asp-route-ordercode="@item.OrderCode">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</body>
+</html>

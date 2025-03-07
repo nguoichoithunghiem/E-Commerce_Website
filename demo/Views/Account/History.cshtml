@@ -1,0 +1,90 @@
+﻿@model IEnumerable<OrderHistoryViewModel>
+
+@{
+    ViewData["Title"] = "Danh sách lịch sử đơn hàng";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+    <h3>Danh sách lịch sử đơn hàng của: @ViewBag.UserEmail</h3>
+
+    <!-- Thêm bộ lọc theo ngày -->
+    <form method="get" action="@Url.Action("History", "Account")">
+        <label for="startDate">Từ: </label>
+        <input type="date" id="startDate" name="startDate" />
+
+        <label for="endDate">Đến: </label>
+        <input type="date" id="endDate" name="endDate" />
+
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </form>
+
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Phí vận chuyển</th>
+                <th>Tổng tiền</th>
+                <th>Tổng tiền sau giảm giá</th>
+                <th>Mã coupon</th>
+                <th>Trạng thái đơn hàng</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.OrderCode</td>
+                    <td>@item.ShippingCost.ToString("#,##0 đ")</td>
+                    <td>@item.TotalAmount</td>
+                    <td>@item.TotalAfterDiscount</td>
+                    <td>@item.CouponCode</td>
+                    <td>
+                        @if (item.Status == 1)
+                        {
+                            <span class="text text-success">Chờ xác nhận</span>
+                        }
+                        else if (item.Status == 2)
+                        {
+                            <span class="text text-success">Đã xử lý</span>
+                        }
+                        else if (item.Status == 3)
+                        {
+                            <span class="text text-success">Đang giao</span>
+                        }
+                        else if (item.Status == 4)
+                        {
+                            <span class="text text-success">Khách đã nhận hàng</span>
+                        }
+                        else
+                        {
+                            <span class="text text-danger">Đã hủy</span>
+                        }
+                    </td>
+                    <td>@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                    <td>
+                        <a class="btn btn-info btn-sm" asp-action="OrderDetail" asp-controller="Account" asp-route-orderCode="@item.OrderCode">Xem Chi Tiết</a>
+                    </td>
+                    <td>
+                        @if (item.Status == 4)  // Chỉ hiển thị nút đánh giá nếu trạng thái đơn hàng là "Khách đã nhận hàng"
+                        {
+                            <a class="btn btn-primary btn-sm" asp-action="ReviewOrder" asp-controller="Account" asp-route-ordercode="@item.OrderCode">Đánh giá</a>
+                        }
+
+                        @if (item.Status != 4 && item.Status != 5)  // Kiểm tra trạng thái đơn hàng không phải "Khách đã nhận hàng" và "Đã hủy"
+                        {
+                            <a onclick="return confirm('Bạn xác nhận muốn hủy?')" class="btn btn-warning btn-sm" asp-action="CancelOrder" asp-controller="Account" asp-route-ordercode="@item.OrderCode">Hủy đơn hàng</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

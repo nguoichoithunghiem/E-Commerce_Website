@@ -1,0 +1,148 @@
+﻿@model IEnumerable<ProductReviewViewModel>
+
+<h3 class="text-center mb-4">Đánh giá sản phẩm đã mua</h3>
+
+<!-- Form để gửi đánh giá cho từng sản phẩm -->
+@foreach (var item in Model)
+{
+    <div class="product-review-container mb-5 p-4 shadow-sm rounded bg-light">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <h5><strong>@item.ProductName</strong></h5>
+                <p><strong>Giá:</strong> @item.Price VND</p>
+                <p><strong>Số lượng:</strong> @item.Quantity</p>
+            </div>
+        </div>
+
+        <form method="post" asp-action="SubmitReview">
+            <input type="hidden" name="ProductId" value="@item.ProductId" />
+
+            <div class="form-group mb-3">
+                <label for="Name">Tên:</label>
+                <input type="text" class="form-control" name="Name" placeholder="Nhập tên của bạn" required />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Email">Email:</label>
+                <input type="email" class="form-control" name="Email" placeholder="Nhập email của bạn" required />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Comment">Đánh giá:</label>
+                <textarea class="form-control" name="Comment" rows="4" placeholder="Nhập đánh giá về sản phẩm..." required></textarea>
+            </div>
+
+            <!-- Đánh giá sao -->
+            <div class="form-group mb-3">
+                <label for="Star">Đánh giá (1-5 sao):</label>
+                <div class="star-rating" id="star-rating-@item.ProductId">
+                    <span class="star" data-value="1">&#9733;</span>
+                    <span class="star" data-value="2">&#9733;</span>
+                    <span class="star" data-value="3">&#9733;</span>
+                    <span class="star" data-value="4">&#9733;</span>
+                    <span class="star" data-value="5">&#9733;</span>
+                </div>
+                <input type="hidden" name="Star" id="star-input-@item.ProductId" required />
+            </div>
+
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Gửi đánh giá</button>
+            </div>
+        </form>
+    </div>
+}
+
+<!-- Thêm CSS để làm đẹp -->
+<style>
+    .product-review-container {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+    }
+
+        .product-review-container h5 {
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+    .form-group label {
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+    /* Tạo đường viền nhẹ cho các trường nhập liệu */
+    .form-control {
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+        /* Tạo hiệu ứng hover cho các trường nhập liệu */
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, .5);
+        }
+
+    .star-rating {
+        display: flex;
+        gap: 5px;
+        cursor: pointer;
+    }
+
+    .star {
+        font-size: 30px;
+        color: #ddd;
+    }
+
+        .star.selected {
+            color: #ffd700;
+        }
+
+    /* Đảm bảo các bảng không bị quá rộng trên màn hình nhỏ */
+    media (max-width: 768px) {
+        .product-review-container
+
+    {
+        padding: 20px;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+    }
+
+    .btn-lg {
+        width: 100%;
+    }
+
+    }
+</style>
+
+<!-- JavaScript để xử lý sự kiện chọn sao -->
+<script>
+    document.querySelectorAll('.star-rating').forEach(function(starRating) {
+        const stars = starRating.querySelectorAll('.star');
+        const hiddenInput = document.getElementById('star-input-' + starRating.id.split('-')[2]);
+
+        stars.forEach(function(star) {
+            star.addEventListener('click', function() {
+                const rating = star.getAttribute('data-value');
+                hiddenInput.value = rating;
+
+                stars.forEach(function(innerStar) {
+                    if (innerStar.getAttribute('data-value') <= rating) {
+                        innerStar.classList.add('selected');
+                    } else {
+                        innerStar.classList.remove('selected');
+                    }
+                });
+            });
+        });
+    });
+</script>

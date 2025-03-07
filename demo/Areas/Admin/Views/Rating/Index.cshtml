@@ -1,0 +1,75 @@
+﻿@model IEnumerable<RatingModel>
+
+@{
+    ViewData["title"] = "Danh Sách Đánh Giá Sản Phẩm";
+
+    Paginate pager = new Paginate();
+
+    int pageNo = 0;
+
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Danh Sách Đánh Giá Sản Phẩm</title>
+</head>
+<body>
+    <h3>Danh Sách Đánh Giá Sản Phẩm</h3>
+
+
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Sản Phẩm</th>
+                <th>Đánh Giá</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                @* Kiểm tra item và Product có null không *@
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>
+                        @* Kiểm tra xem Product có null không *@
+                        @if (item.Product != null)
+                        {
+                            @item.Product.Name
+                        }
+                        else
+                        {
+                            <span>Không có sản phẩm</span>
+                        }
+                    </td>
+                    <td>@item.Star</td>
+                    
+                    <td>
+                        <a class="btn btn-danger btn-sm confirmDeletion" asp-action="Delete" asp-controller="Rating" asp-route-Id="@item.Id">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Paging Component -->
+    @if (pager != null)
+    {
+        <partial name="_paging" model="@pager" />
+    }
+
+</body>
+</html>

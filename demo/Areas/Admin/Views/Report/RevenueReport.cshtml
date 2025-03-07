@@ -1,0 +1,91 @@
+﻿@model IEnumerable<OrderModel>
+@{
+    ViewData["title"] = "Báo Cáo Doanh Thu";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Báo Cáo Doanh Thu</title>
+</head>
+<body>
+    <h3>Báo Cáo Doanh Thu</h3>
+
+    <!-- Form lọc theo khoảng thời gian -->
+    <form method="get" asp-action="RevenueReport" class="form-inline mb-3">
+        <div class="form-group mr-2">
+            <label for="FromDate">Từ ngày</label>
+            <input type="date" id="FromDate" name="FromDate" class="form-control" value="@Context.Request.Query["FromDate"]" />
+        </div>
+        <div class="form-group mr-2">
+            <label for="ToDate">Đến ngày</label>
+            <input type="date" id="ToDate" name="ToDate" class="form-control" value="@Context.Request.Query["ToDate"]" />
+        </div>
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </form>
+
+    <!-- Hiển thị tổng doanh thu -->
+    @if (ViewBag.TotalRevenue != null)
+    {
+        <div>
+            <h4>Tổng Doanh Thu: @ViewBag.TotalRevenue</h4>
+        </div>
+    }
+
+    <!-- Bảng danh sách đơn hàng -->
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Mã Đơn Hàng</th>
+                <th>Phí Vận Chuyển</th>
+                <th>Tổng Tiền</th>
+                <th>Tổng Sau Giảm Giá</th>
+                <th>Ngày Tạo</th>
+                <th>Trạng Thái</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.OrderCode</td>
+                    <td>@item.ShippingCost.ToString("#,##0 đ")</td>
+                    <td>@item.TotalAmount.ToString("#,##0 đ")</td>
+                    <td>@item.TotalAfterDiscount.ToString("#,##0 đ")</td>
+                    <td>@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                    <td>
+                        @if (item.Status == 1)
+                        {
+                            <span class="text text-success">Đơn hàng mới</span>
+                        }
+                        else if (item.Status == 2)
+                        {
+                            <span class="text text-success">Đã xử lý</span>
+                        }
+                        else if (item.Status == 3)
+                        {
+                            <span class="text text-success">Đang giao</span>
+                        }
+                        else if (item.Status == 4)
+                        {
+                            <span class="text text-success">Khách đã nhận hàng</span>
+                        }
+                        else
+                        {
+                            <span class="text text-danger">Đã hủy</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-warning btn-sm" asp-action="ViewOrder" asp-controller="Report" asp-route-ordercode="@item.OrderCode">Xem Chi Tiết</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</body>
+</html>

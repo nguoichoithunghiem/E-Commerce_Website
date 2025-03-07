@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["title"] = "Danh Sách Người Dùng";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewData["title"]</title>
+
+    <!-- Thêm link tới CSS cho bảng và nút -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Thêm script cho việc xác nhận xóa -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Xác nhận xóa người dùng
+            $(".confirmDeletion").click(function (e) {
+                e.preventDefault(); // Ngừng hành động mặc định (xóa ngay lập tức)
+
+                var deleteUrl = $(this).attr("href");
+
+                if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
+                    window.location.href = deleteUrl; // Nếu người dùng xác nhận, thực hiện xóa
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h3>Danh Sách Người Dùng</h3>
+
+        <!-- Nút Thêm Người Dùng -->
+        <a class="btn btn-primary mb-3" asp-action="Create" asp-controller="User">Thêm Người Dùng</a>
+
+        <!-- Bảng Danh Sách Người Dùng -->
+        <div class="table-responsive">
+            <table class="table table-striped" id="myTable">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Tên Người Dùng</th>
+                        <th>Email</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Vai Trò</th>
+                        <th>Số Lượng Mua Hàng</th>
+                        <th>Chi Tiêu Tổng</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var usersWithRoles in Model)
+                    {
+                        <tr>
+                            <td>@usersWithRoles.User.Id</td>
+                            <td>@usersWithRoles.User.UserName</td>
+                            <td>@usersWithRoles.User.Email</td>
+                            <td>@usersWithRoles.User.PhoneNumber</td>
+
+                            <td>@usersWithRoles.RoleName</td>
+                            <td>@usersWithRoles.User.PurchaseCount</td>
+                            <td>@usersWithRoles.User.TotalSpent</td> <!-- Hiển thị TotalSpent ở đây -->
+
+                            <td>
+                                <a class="btn btn-warning btn-sm" asp-action="Edit" asp-controller="User" asp-route-Id="@usersWithRoles.User.Id">Chỉnh Sửa</a>
+                                <a class="btn btn-danger btn-sm confirmDeletion" href="@Url.Action("Delete", "User", new { id = usersWithRoles.User.Id })">Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Link để tải script cho Bootstrap (cho responsive và một số chức năng khác) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

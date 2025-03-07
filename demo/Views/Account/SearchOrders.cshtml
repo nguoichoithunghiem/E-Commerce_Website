@@ -1,0 +1,97 @@
+﻿@model IEnumerable<OrderModel>
+
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+    <h3>Lịch sử đơn hàng của khách vãng lai</h3>
+
+    <!-- Hiển thị thông báo lỗi nếu có -->
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    }
+
+    <!-- Form tìm kiếm -->
+    <form method="post" action="@Url.Action("SearchOrders", "Account")">
+        <div class="form-group">
+            <label for="phoneNumber">Nhập số điện thoại của bạn:</label>
+            <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Số điện thoại" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Tra cứu</button>
+    </form>
+
+    <!-- Bảng hiển thị lịch sử đơn hàng -->
+    @if (Model != null && Model.Any())
+    {
+        <table class="table" id="myTable">
+            <thead>
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Phí vận chuyển</th>
+                    <th>Tổng tiền</th>
+                    <th>Tổng sau giảm giá</th>
+                    <th>Mã giảm giá</th>
+                    <th>Tên khách hàng</th>
+                    <th>Trạng thái đơn hàng</th>
+                    <th>Ngày tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.OrderCode</td>
+                        <td>@item.ShippingCost.ToString("#,##0 đ")</td>
+                        <td>@item.TotalAmount</td>
+                        <td>@item.TotalAfterDiscount</td>
+                        <td>@item.CouponCode</td>
+                        <td>@item.UserName</td>
+                        <td>
+                            @if (item.Status == 1)
+                            {
+                                <span class="text text-success">Chờ xác nhận</span>
+                            }
+                            else if (item.Status == 2)
+                            {
+                                <span class="text text-success">Đã xử lý</span>
+                            }
+                            else if (item.Status == 3)
+                            {
+                                <span class="text text-success">Đang giao</span>
+                            }
+                            else if (item.Status == 4)
+                            {
+                                <span class="text text-success">Khách đã nhận hàng</span>
+                            }
+                            else
+                            {
+                                <span class="text text-danger">Đã hủy</span>
+                            }
+                        </td>
+                        <td>@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                        <td>
+                            <a class="btn btn-info btn-sm" asp-action="OrderDetail" asp-controller="Account" asp-route-orderCode="@item.OrderCode">Xem Chi Tiết</a>
+                        </td>
+                        <td>
+                            @if (item.Status != 5)  // Kiểm tra trạng thái đơn hàng
+                            {
+                                <a onclick="return confirm('Bạn xác nhận muốn hủy?')" class="btn btn-warning btn-sm" asp-action="CancelOrder" asp-controller="Account" asp-route-ordercode="@item.OrderCode">Hủy đơn hàng</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</body>
+</html>

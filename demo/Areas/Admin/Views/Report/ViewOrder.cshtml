@@ -1,0 +1,62 @@
+﻿@model IEnumerable<OrderDetail>
+@{
+    ViewData["title"] = "Chi Tiết Đơn Hàng";
+    decimal total = 0; // Lưu tổng số tiền
+    decimal subtotal = 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Chi Tiết Đơn Hàng</title>
+</head>
+<body>
+    <h3>Chi Tiết Đơn Hàng</h3>
+
+    <div class="table table-responsive">
+        <table class="table" id="detail_order">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Mã Đơn Hàng</th>
+                    <th>Tên Người Dùng</th>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Giá Sản Phẩm</th>
+                    <th>Số Lượng</th>
+                    <th>Size</th>
+                    <th>Màu sắc</th>
+                    <th>Tổng Tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    subtotal = item.Quantity * item.Price; //số lượng * giá
+                    total += subtotal;
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.OrderCode</td>
+                        <td>@item.UserName</td>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Price.ToString("#,##0 VNĐ")</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Size</td>
+                        <td>@item.Color</td>
+                        <td>@subtotal.ToString("#,##0 VNĐ")</td>
+                    </tr>
+                }
+                <tr>
+                    <td>Tổng cộng:</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
+                    <td>Tổng : @total.ToString("#,##0 đ")</td>
+                    <td>Phí Vận Chuyển : @ViewBag.ShippingCost.ToString("#,##0 đ")</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

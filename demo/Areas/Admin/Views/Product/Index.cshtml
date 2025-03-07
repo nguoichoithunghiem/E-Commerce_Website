@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ProductModel>
+@{
+    ViewData["title"] = "Danh Sách Sản Phẩm";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <h3>Danh Sách Sản Phẩm</h3>
+
+    <a class="btn btn-primary" asp-action="Create" asp-controller="Product">Thêm Sản Phẩm</a>
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th>Tên Sản Phẩm</th>
+                <th>Số Lượng</th>
+                <th>Đã Bán</th>
+                <th>Số Lượng Sản Phẩm</th>
+                <th>Mô Tả Sản Phẩm</th>
+                <th>Giá Sản Phẩm</th>
+                <th>Hình Ảnh Sản Phẩm</th>
+                <th>Slug Sản Phẩm</th>
+                <th>Danh Mục Sản Phẩm</th>
+                <th>Thương Hiệu Sản Phẩm</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>
+                        @if (@item.Quantity == 0)
+                        {
+                            <span class="text text-danger"><b> @item.Quantity</b></span>
+                        }
+                        else
+                        {
+                            <span class="text text-primary"> @item.Quantity</span>
+                        }
+
+                    </td>
+                    <td>@item.SoldOut</td>
+                    <td><a asp-action="CreateProductQuantity" asp-controller="Product" asp-route-Id="@item.Id">Thêm Số Lượng</a></td>
+                    <td>@Html.Raw(@item.Description)</td>
+                    <td>@item.Price.ToString("#,##0 VNĐ")</td>
+                    <td> <img src="~/media/products/@item.Image" width="120px" height="150px" /> </td>
+                    <td> @item.Slug </td>
+                    <td> @item.Category.Name </td>
+                    <td> @item.Brand.Name </td>
+                    <td>
+                        <a class="btn btn-warning btn-sm" asp-action="Edit" asp-controller="Product" asp-route-Id="@item.Id">Chỉnh Sửa</a>
+                        <form asp-action="Delete" asp-controller="Product" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?')">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+
+</html>

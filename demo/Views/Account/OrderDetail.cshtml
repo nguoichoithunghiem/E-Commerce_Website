@@ -1,0 +1,39 @@
+﻿@model demo.ViewModels.OrderDetailViewModel
+
+<h3>Chi Tiết Đơn Hàng - @Model.OrderCode</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên Sản Phẩm</th>
+            <th>Giá Sản Phẩm</th>
+            <th>Số Lượng</th>
+            <th>Size</th>
+            <th>Màu sắc</th>
+            <th>Tổng Tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Price.ToString("C0") VNĐ</td>
+                <td>@item.Quantity</td>
+                <td>@item.Size</td>
+                <td>@item.Color</td>
+                <td>@item.TotalPrice.ToString("C0") VNĐ</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Additional information like Shipping Cost, Coupon Code, etc. -->
+<p>Phí vận chuyển: @Model.ShippingCost.ToString("C0") VNĐ</p>
+<p>Tổng tiền: @Model.TotalAmount.ToString("C0") VNĐ</p>
+<p>Tổng tiền sau giảm giá: @Model.TotalAfterDiscount.ToString("C0") VNĐ</p>
+<p>Mã Coupon: @Model.CouponCode</p>
+<p>Trạng thái: @Model.Status</p>
+<p>Ngày tạo: @Model.CreatedDate.ToString("dd-MM-yyyy")</p>
+<p>Địa chỉ giao hàng: @Model.ShippingAddress</p>
+<p>Số điện thoại: @Model.PhoneNumber</p>

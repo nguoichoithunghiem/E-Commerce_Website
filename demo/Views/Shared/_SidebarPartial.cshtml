@@ -1,0 +1,46 @@
+﻿<div class="left-sidebar">
+    <div class="panel-group category-products" id="accordian">
+        <!-- category-products -->
+        <h2>Danh Mục</h2>
+        <vc:categories></vc:categories>
+    </div><!-- /category-products -->
+
+    <div class="brands_products">
+        <!-- brands_products -->
+        <h2>Thương Hiệu</h2>
+        <vc:brands></vc:brands>
+    </div><!-- /brands_products -->
+    <!-- Lọc theo giá -->
+    <div class="price-range">
+        <h2>Lọc theo giá</h2>
+        <div class="brands-name">
+            <ul class="nav nav-pills nav-stacked">
+                <li>
+                    <a asp-action="Search" asp-controller="Product" asp-route-priceRange="500000-1000000">
+                        500.000 - 1.000.000 VND
+                    </a>
+                </li>
+                <li>
+                    <a asp-action="Search" asp-controller="Product" asp-route-priceRange="1000000-1500000">
+                        1.000.000 - 1.500.000 VND
+                    </a>
+                </li>
+                <li>
+                    <a asp-action="Search" asp-controller="Product" asp-route-priceRange="1500000-2000000">
+                        1.500.000 - 2.000.000 VND
+                    </a>
+                </li>
+                <li>
+                    <a asp-action="Search" asp-controller="Product" asp-route-priceRange="2000000-4000000">
+                        2.000.000 - 4.000.000 VND
+                    </a>
+                </li>
+                <li>
+                    <a asp-action="Search" asp-controller="Product" asp-route-priceRange="4000000-10000000">
+                        4.000.000 - 10.000.000 VND
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /price-range -->
+</div><!-- /left-sidebar -->
